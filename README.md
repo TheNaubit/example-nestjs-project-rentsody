@@ -15,7 +15,7 @@ It has several features:
 1. Clone this repo
 2. Run `cp .env.example .env`, it has the port to use as a sample config
 3. Run `pnpm install` (it should also work with `npm` but I used `pnpm`). This will also generate the types from Prisma, create a SQLite DB and seed it with some messages
-5. Run `pnpm run start:dev` to launch the server in Dev mode. Ready!
+4. Run `pnpm run start:dev` to launch the server in Dev mode. Ready!
 
 ### What to do now?
 Once it is running, you will see lots of logs but one tells you the URL were the API is listening to. By default it is listening at `http://localhost:3000`.
