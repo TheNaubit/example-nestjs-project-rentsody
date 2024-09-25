@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #chat {
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+      width: 90vw;
+      max-width: 600px;
+      margin: auto;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    #messages p {
+      margin: 0;
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+    }
+    #sendMessage {
+      display: flex;
+      justify-content: space-between;
+    }
+    #sendMessage input {
+      flex: 1;
+      padding: 10px;
+      margin-right: 10px;
+    }
+    #sendMessage button {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="chat">
+    <h2>Live Chat <span id="username"></span></h2>
+    <div id="messages"></div>
+    <div id="sendMessage">
+      <input id="message" type="text" placeholder="Type something..." autocomplete="off">
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+  <script>
+    // Connect to our server (make sure to change this!)
+    const socket = io('http://localhost:3000');
+
+    // Load all messages when the page loads
+    socket.emit('getMessages');
+
+    // Some useful DOM elements
+    const messageInput = document.getElementById('message');
+    const sendButton = document.getElementById('sendBtn');
+    const messagesDiv = document.getElementById('messages');
+    const usernameSpan = document.getElementById('username');
+
+    // When the page loads, ask the user for their username
+    // We keep asking until we get a valid username
+    let username;
+    do {
+      username = prompt("Ingresa tu nombre de usuario:");
+    } while (!username.trim());
+
+    // Show the username in the UI
+    usernameSpan.textContent = `- ${username}`;
+
+    // Function to append a new message to the chat
+    function appendMessage(message) {
+      const p = document.createElement('p');
+      p.textContent = `${message.username}: ${message.content}`;
+      messagesDiv.appendChild(p);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Auto-scroll
+    }
+
+    // Send a message when the user clicks the send button
+    sendButton.addEventListener('click', () => {
+      const message = messageInput.value;
+      if (message.trim()) {
+        socket.emit('sendMessage', { content: message, username: username });
+        messageInput.value = '';  // Make sure to clear the input
+      }
+    });
+
+    // Or when the user presses Enter
+    messageInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        sendButton.click();
+      }
+    });
+
+    // When the socket receives a new message, append it to the chat
+    socket.on('newMessage', (message) => {
+      appendMessage(message);
+    });
+
+    // This is the handler for the "allMessages" event
+    // It receives all messages from the server and appends them to the chat
+    socket.on('allMessages', (messages) => {
+      messages.forEach(appendMessage);
+    });
+  </script>
+</body>
+</html>
