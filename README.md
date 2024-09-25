@@ -5,7 +5,6 @@ This a small example project using Nest.js, created for the Rentsody project. It
 It has several features:
 - Type-safe config
 - All the gateways, services and controllers have complete Jest tests
-- Fully commented with JSDoc
 - Using Prisma as a ORM and SQLite as a quick mockup DB
 - Using observables and websockets
 - Includes a Swagger URL (`/api`) and every route is fully described with examples, parameters, etc...
